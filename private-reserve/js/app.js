@@ -15,6 +15,8 @@ $('#cookBtn').addEventListener('click', () => {
     rpm      : +$('#rpm').value,
     feed     : +$('#feed').value,
     stepPct  : +$('#step').value,
+    passExt  : +$('#ext').value,
+    direction: $('#direction').value,
     oneWay   : $('#oneway').checked,
     metric   : $('#metric').checked
   };

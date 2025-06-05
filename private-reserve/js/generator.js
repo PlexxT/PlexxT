@@ -4,12 +4,15 @@ import { in2mm } from './utils.js';
 export function buildGcode(params) {
   const {
     stockX, stockY, depth, dia,
-    rpm, feed, stepPct, oneWay, metric
+    rpm, feed, stepPct, passExt, direction,
+    oneWay, metric
   } = params;
 
   // 1. math
   const step = dia * stepPct / 100;
-  const passes = Math.ceil(stockY / step);
+  const passes = direction === 'x'
+    ? Math.ceil(stockY / step)
+    : Math.ceil(stockX / step);
 
   // 2. unit helpers
   const u = metric ? in2mm : x => x;     // convert on the fly
@@ -26,20 +29,34 @@ export function buildGcode(params) {
 
   // 4. passes loop
   for (let i=0; i<passes; i++) {
-    const y = Math.min(i * step, stockY);
-    const xStart  = ((oneWay || i%2===0) ? 0         : stockX);
-    const xFinish = ((oneWay || i%2===0) ? stockX    : 0);
+    if (direction === 'x') {
+      const y = Math.min(i * step, stockY);
+      const xStart  = ((oneWay || i%2===0) ? -passExt : stockX + passExt);
+      const xFinish = ((oneWay || i%2===0) ? stockX + passExt : -passExt);
 
-    g.push(`(Pass ${i+1})`);
-    g.push(`G0 X${fmt(u(xStart))} Y${fmt(u(y))} Z5`);
-    g.push(`G1 Z-${fmt(u(depth))} F${feed}`);
-    g.push(`G1 X${fmt(u(xFinish))} F${feed}`);
+      g.push(`(Pass ${i+1})`);
+      g.push(`G0 X${fmt(u(xStart))} Y${fmt(u(y))} Z5`);
+      g.push(`G1 Z-${fmt(u(depth))} F${feed}`);
+      g.push(`G1 X${fmt(u(xFinish))} F${feed}`);
 
-    // retract
-    g.push('G0 Z5');
+      g.push('G0 Z5');
+      if (oneWay) {
+        g.push(`G0 X${fmt(u(xStart))}`);
+      }
+    } else {
+      const x = Math.min(i * step, stockX);
+      const yStart  = ((oneWay || i%2===0) ? -passExt : stockY + passExt);
+      const yFinish = ((oneWay || i%2===0) ? stockY + passExt : -passExt);
 
-    if (oneWay) {      // rapid back
-      g.push(`G0 X${fmt(u(xStart))}`);
+      g.push(`(Pass ${i+1})`);
+      g.push(`G0 X${fmt(u(x))} Y${fmt(u(yStart))} Z5`);
+      g.push(`G1 Z-${fmt(u(depth))} F${feed}`);
+      g.push(`G1 Y${fmt(u(yFinish))} F${feed}`);
+
+      g.push('G0 Z5');
+      if (oneWay) {
+        g.push(`G0 Y${fmt(u(yStart))}`);
+      }
     }
   }
 
