@@ -1,0 +1,10 @@
+/* --- quick reset --- */
+*{box-sizing:border-box;font-family:sans-serif;margin:0}
+body,html{height:100%;}
+/* layout */
+main{display:flex;gap:1rem;padding:1rem;height:calc(100% - 60px);}
+#paramPanel{min-width:240px;display:flex;flex-direction:column;gap:.75rem;}
+fieldset{border:1px solid #888;padding:.5rem}
+canvas{width:100%;height:50%;}
+textarea{width:100%;height:50%;font-family:monospace;resize:none;}
+button{padding:.5rem 1rem;margin-top:1rem;cursor:pointer;}
