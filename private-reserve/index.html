@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Face-Mill Quick G-Code</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Three.js CDN for preview -->
+  <script defer src="https://unpkg.com/three@latest/build/three.min.js"></script>
+  <script defer src="js/app.js" type="module"></script>
+</head>
+
+<body>
+  <header> <img src="assets/logo.svg" height="24" /> Face-Mill Macro </header>
+
+  <main class="flex-row">
+    <!-- LEFT: form -->
+    <section id="paramPanel">
+      <!-- Stock block -->
+      <fieldset>
+        <legend>Stock Net Dim. (in)</legend>
+        <label>X <input id="stockX"  type="number" step="0.001" value="4" /></label>
+        <label>Y <input id="stockY"  type="number" step="0.001" value="2" /></label>
+        <label>Z Depth <input id="depth" type="number" step="0.001" value="0.080" /></label>
+      </fieldset>
+      <!-- Cutter block -->
+      <fieldset>
+        <legend>Cutter Params</legend>
+        <label>Ø (in) <input id="dia"       type="number" step="0.001" value="1.5" /></label>
+        <label>RPM    <input id="rpm"       type="number" value="840" /></label>
+        <label>Feedipm<input id="feed"      type="number" value="54" /></label>
+        <label><input id="metric" type="checkbox" /> Convert to metric</label>
+      </fieldset>
+
+      <!-- Toolpath block -->
+      <fieldset>
+        <legend>Toolpath Params</legend>
+        <label>Stepover %<input id="step" type="number" value="45" /></label>
+        <label>Pass Extension<input id="ext" type="number" step="0.001" value="0.100" /></label>
+        <label>Pass Direction
+          <select id="direction">
+            <option value="x" selected>X</option>
+            <option value="y">Y</option>
+          </select>
+        </label>
+        <label><input id="oneway" type="checkbox" /> One-way passes</label>
+      </fieldset>
+
+      <button id="cookBtn">Cook it</button>
+    </section>
+
+    <!-- RIGHT: canvas preview + code -->
+    <section id="previewPanel">
+      <canvas id="glCanvas"></canvas>
+      <textarea id="gcodeBox" spellcheck="false"></textarea>
+    </section>
+  </main>
+
+  <footer>Made with ☕ + 🛠</footer>
+</body>
+</html>
