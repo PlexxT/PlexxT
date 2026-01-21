@@ -24,6 +24,11 @@ $('#cookBtn').addEventListener('click', () => {
   $('#gcodeBox').value = code;
 
   // 2. (optional) build segments for preview
-  const segs = mockSegmentsFromParams(params);  // stub – write later
-  drawToolpath(viewCtx, segs);
+  const segs =
+    typeof mockSegmentsFromParams === 'function'
+      ? mockSegmentsFromParams(params)
+      : null;
+  if (Array.isArray(segs) && segs.length) {
+    drawToolpath(viewCtx, segs);
+  }
 });
