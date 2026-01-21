@@ -7,8 +7,9 @@ export function initViewer() {
   const cam   = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
   cam.position.set(0, -150, 100);
   cam.lookAt(scene.position);
-  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('glCanvas'), antialias:true });
-  renderer.setSize(glCanvas.clientWidth, glCanvas.clientHeight);
+  const canvas = document.getElementById('glCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
   // simple light + stock block (wireframe cube)
   scene.add(new THREE.AmbientLight(0xffffff, 0.8));
