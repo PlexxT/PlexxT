@@ -14,6 +14,8 @@ export function buildGcode(params) {
   // 2. unit helpers
   const u = metric ? in2mm : x => x;     // convert on the fly
   const fmt = v => v.toFixed(3);
+  const safeZHome = 25;
+  const safeZRetract = 5;
 
   // 3. header
   let g = [];
@@ -22,7 +24,7 @@ export function buildGcode(params) {
   g.push('G90 G17');                    // abs, XY plane
   g.push(`S${rpm} M3`);
   g.push('G28');                        // home
-  g.push('G0 Z25');                     // safe Z (mm) – tweak
+  g.push(`G0 Z${fmt(u(safeZHome))}`);   // safe Z – tweak
 
   // 4. passes loop
   for (let i=0; i<passes; i++) {
@@ -31,12 +33,12 @@ export function buildGcode(params) {
     const xFinish = ((oneWay || i%2===0) ? stockX    : 0);
 
     g.push(`(Pass ${i+1})`);
-    g.push(`G0 X${fmt(u(xStart))} Y${fmt(u(y))} Z5`);
-    g.push(`G1 Z-${fmt(u(depth))} F${feed}`);
-    g.push(`G1 X${fmt(u(xFinish))} F${feed}`);
+    g.push(`G0 X${fmt(u(xStart))} Y${fmt(u(y))} Z${fmt(u(safeZRetract))}`);
+    g.push(`G1 Z-${fmt(u(depth))} F${fmt(u(feed))}`);
+    g.push(`G1 X${fmt(u(xFinish))} F${fmt(u(feed))}`);
 
     // retract
-    g.push('G0 Z5');
+    g.push(`G0 Z${fmt(u(safeZRetract))}`);
 
     if (oneWay) {      // rapid back
       g.push(`G0 X${fmt(u(xStart))}`);
@@ -44,7 +46,7 @@ export function buildGcode(params) {
   }
 
   // 5. footer
-  g.push('G0 Z25');
+  g.push(`G0 Z${fmt(u(safeZHome))}`);
   g.push('M5');
   g.push('M30');
 
